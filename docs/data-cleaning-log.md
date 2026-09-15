@@ -66,3 +66,35 @@ of flights being cancelled.
 
 **Status**: Data acquisition phase complete. Moving into Power Query import and
 cleaning phase next.
+
+
+## 2026-09-14 — Power Query cleanup and star schema modeling
+
+**Power Query cleaning completed**:
+- Combined all 36 monthly CSVs into a single `Flights` fact table
+- Renamed all columns from BTS's raw SCREAMING_SNAKE_CASE to clean, readable names
+  (e.g. `DEP_DELAY` → `DepDelay`, `OP_UNIQUE_CARRIER` → `CarrierCode`)
+- Fixed data types: `FlightDate` set to Date type, delay columns to Decimal Number,
+  IDs/flags to Whole Number, text fields confirmed as Text
+- Dropped unused columns: `DEST_AIRPORT_SEQ_ID`, `Source.Name`
+- Derived `DayOfWeek` from `FlightDate` (not present in BTS's raw export) using
+  `Date.DayOfWeekName()`
+- Loaded full dataset into the model: confirmed 20,928,599 rows via card visual,
+  matching the row count from independent Python verification
+
+**Star schema built**:
+- `Flights` (fact table) at the center
+- `DimDate` — calendar table (2023-01-01 to 2025-12-31) with Year, Quarter, Month,
+  DayOfWeek, IsWeekend, YearMonth; marked as the official Power BI date table
+- `DimCarrier` — distinct carrier codes mapped to full airline names via SWITCH
+- `DimAirport` — origin and destination airports combined and deduplicated into one
+  dimension, since both columns represent the same real-world entity (an airport)
+
+**Modeling decision — dual airport relationship**: `DimAirport` relates to `Flights`
+twice (via `OriginAirport` and `DestAirport`), but Power BI only allows one active
+relationship between two tables at a time. Set the Origin relationship as active
+(default for most measures) and the Destination relationship as inactive, to be
+activated explicitly per-measure using `USERELATIONSHIP()` for destination-side
+analysis (e.g. "average arrival delay by destination airport").
+
+**Status**: Data model complete. Moving into DAX measure-building next.
