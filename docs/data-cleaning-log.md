@@ -98,3 +98,61 @@ activated explicitly per-measure using `USERELATIONSHIP()` for destination-side
 analysis (e.g. "average arrival delay by destination airport").
 
 **Status**: Data model complete. Moving into DAX measure-building next.
+
+
+## 2026-09-17 — DAX measures built
+
+Built the full measure set across five Display Folders, covering every metric
+needed for the planned dashboard pages.
+
+**Core Metrics**:
+- `Total Flights` — uses SUM(Flights[FlightCount]) rather than COUNTROWS, since
+  FlightCount is BTS's purpose-built per-row flight indicator
+- `On-Time %` — defined as ArrDelayed15 = 0 (arrived within 15 minutes of schedule),
+  using DIVIDE() to safely handle any divide-by-zero
+- `Avg Departure Delay`, `Avg Arrival Delay` — plain AVERAGE() across all flights
+  (including early/on-time), giving the true network-wide average, not just
+  average among delayed flights
+
+**Delay Causes**:
+- Avg and Total measures for CarrierDelay, WeatherDelay, NASDelay, SecurityDelay,
+  LateAircraftDelay
+- Key caveat: since these columns are null for ~79% of rows (per the earlier null
+  pattern finding), AVERAGE() automatically ignores nulls — so each "Avg X Delay"
+  measure is really "average delay minutes among flights where that cause applied,"
+  not diluted by non-applicable rows. This is the correct, meaningful number for
+  the story, not a mistake to fix.
+
+**Cancellations**:
+- `Cancellation Rate`, `Diversion Rate`, `Total Cancelled Flights`
+- Added a `CancellationReason` calculated column on Flights, mapping BTS's
+  CancellationCode (A/B/C/D) to readable labels (Carrier/Weather/National Air
+  System/Security) for breakdown charts
+
+**Time Intelligence**:
+- `Flights PY`/`Flights YoY %` and `Flights PM`/`Flights MoM %` using
+  SAMEPERIODLASTYEAR and DATEADD against DimDate[Date]
+- `On-Time % PY`/`On-Time % YoY Change` — same pattern applied to on-time
+  performance rather than raw flight volume
+- These only produce meaningful results in visuals with a date axis (e.g. a line
+  chart on DimDate[YearMonth]); tested on a plain Card first and got a
+  non-meaningful single number, since there was no date filter context — correct
+  behavior once understood, not a bug
+- Fixed a chronological sort issue: DimDate[YearMonth] is text and was sorting
+  alphabetically (e.g. 2024-07, 2025-07, 2024-08...) rather than chronologically.
+  Fixed by adding a numeric DimDate[YearMonthSort] column
+  (Year*100 + MonthNumber) and applying Sort by Column to YearMonth
+
+**Rankings**:
+- `Carrier Rank by On-Time %` — RANKX over DimCarrier, descending
+- `Airport Rank by Avg Delay` — RANKX over DimAirport, ascending
+- Key finding: a naive airport ranking is dominated by tiny regional airports
+  (e.g. single-digit-thousands of flights across 3 years), where one atypical
+  month skews the average wildly (one airport showed 100% on-time off a handful
+  of flights). Added an `Airport Flight Volume` measure
+  (CALCULATE([Total Flights], ALLEXCEPT(DimAirport, DimAirport[AirportCode]))) and
+  applied a >=10,000-flight visual-level filter to get a meaningful "major airport"
+  ranking. Rank numbers still reflect position among all 178 airports (not
+  renumbered 1-N after filtering) — accurate, just not cosmetically sequential.
+
+**Status**: Measure layer complete. Moving into dashboard page building next.
