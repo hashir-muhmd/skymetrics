@@ -32,3 +32,11 @@ travel season).
 ## Year-over-year growth
 Flight volume grew steadily through 2024 compared to 2023, but growth flattened
 and dipped slightly negative in parts of 2025 compared to the prior year.
+
+## NAS delay trend (2023-2025)
+Average NAS (National Air System) delay rose from ~12.5 minutes in 2023 to ~16
+minutes in 2025, a roughly 28% increase — the only delay cause showing a clear
+worsening trend. Over the same period, average carrier delay modestly *improved*
+(from ~25 to ~23.5 minutes), and weather/security stayed roughly flat. This
+suggests the primary bottleneck shifted from airline-controlled operations toward
+air traffic system capacity over the three-year window.
