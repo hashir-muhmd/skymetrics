@@ -40,3 +40,10 @@ worsening trend. Over the same period, average carrier delay modestly *improved*
 (from ~25 to ~23.5 minutes), and weather/security stayed roughly flat. This
 suggests the primary bottleneck shifted from airline-controlled operations toward
 air traffic system capacity over the three-year window.
+
+## Carrier performance spread
+Best-to-worst on-time performance among the 15 carriers spans 14.1 percentage
+points: Endeavor Air (85.5%) to Frontier Airlines (71.4%), with network average at
+79.1%. The same ordering holds when looking at average arrival delay — Endeavor
+Air has the lowest average delay (0.23 min) and Frontier the highest (16.00 min) —
+so the two metrics tell a consistent story rather than contradicting each other.
