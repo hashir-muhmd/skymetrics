@@ -34,6 +34,8 @@ Star schema: fact table `Flights` (~20.9M rows) with dimensions `DimDate` (marke
 
 `DimAirport` relates to `Flights` twice: via `OriginAirport` (active) and `DestAirport` (inactive, activated per-measure with `USERELATIONSHIP()`).
 
+![Data model](docs/data-model.png)
+
 ## DAX measures
 
 25 measures across five folders: Core Metrics, Delay Causes, Cancellations, Time Intelligence, Rankings. Airport rankings apply a 10,000+ flight filter so small regional airports don't distort the averages.
@@ -46,11 +48,19 @@ Star schema: fact table `Flights` (~20.9M rows) with dimensions `DimDate` (marke
 4. **Airport Deep-dive**: major-airport ranking table with a geographic map
 5. **Seasonal Patterns**: flights by month, on-time % by day of week and by month
 
-Screenshots: [`screenshots/dashboard-pages/`](screenshots/dashboard-pages/)
+### Overview
 ![Overview](screenshots/dashboard-pages/overview.png)
+
+### Delay Drivers
 ![Delay Drivers](screenshots/dashboard-pages/delay-drivers.png)
+
+### Carrier Comparison
 ![Carrier Comparison](screenshots/dashboard-pages/carrier-comparison.png)
+
+### Airport Deep-dive
 ![Airport Deep-dive](screenshots/dashboard-pages/airport-deep-dive.png)
+
+### Seasonal Patterns
 ![Seasonal Patterns](screenshots/dashboard-pages/seasonal-patterns.png)
 
 ## Key findings
@@ -68,7 +78,7 @@ Full write-up in [`docs/findings.md`](docs/findings.md). Highlights:
 ```
 skymetrics/
 ├── data/raw/              # source CSVs (gitignored)
-├── docs/                  # cleaning log and findings
+├── docs/                  # cleaning log, findings, data model diagram
 ├── pbix/                  # Power BI file (gitignored)
 ├── powerquery/m-scripts/  # exported M-code
 ├── screenshots/dashboard-pages/
