@@ -47,6 +47,11 @@ Star schema: fact table `Flights` (~20.9M rows) with dimensions `DimDate` (marke
 5. **Seasonal Patterns**: flights by month, on-time % by day of week and by month
 
 Screenshots: [`screenshots/dashboard-pages/`](screenshots/dashboard-pages/)
+![Overview](screenshots/dashboard-pages/overview.png)
+![Delay Drivers](screenshots/dashboard-pages/delay-drivers.png)
+![Carrier Comparison](screenshots/dashboard-pages/carrier-comparison.png)
+![Airport Deep-dive](screenshots/dashboard-pages/airport-deep-dive.png)
+![Seasonal Patterns](screenshots/dashboard-pages/seasonal-patterns.png)
 
 ## Key findings
 
